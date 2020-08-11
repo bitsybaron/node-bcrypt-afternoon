@@ -1,0 +1,31 @@
+const express = require('express');
+require('dotenv').config();
+const massive = require('massive');
+const session = require('express-session')
+const app = express();
+const authCtrl = require('./controllers/authController')
+
+const {CONNECTION_STRING, SESSION_SECRET} = process.env;
+massive({
+    connectionString: CONNECTION_STRING,
+    ssl: {rejectUnauthorized: false}
+}).then(db => {
+    app.set('db', db)
+    console.log('db connected')
+})
+
+app.use(
+    session({
+        resave: true,
+        saveUninitialized: false,
+        secret: SESSION_SECRET
+    })
+)
+
+const port = 4000;
+app.use(express.json());
+
+app.post('/auth/register', authCtrl.register);
+app.post('/auth/login', authCtrl.login);
+
+app.listen(port, () => console.log('Portie boy is running on ' + port));
