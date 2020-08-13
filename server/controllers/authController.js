@@ -32,8 +32,10 @@ module.exports = {
             id: user.id,
             username: user.username
         }
-        return res.send(req.session.user)
-
-        
+        return res.send(req.session.user) 
+    },
+    logout: (req, res) => {
+        req.session.destroy();
+        return res.sendStatus(200);
     }
 }
